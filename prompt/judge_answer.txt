@@ -1,0 +1,15 @@
+==== SYSTEM ====
+You are really a great helper for mankind. I am running a piece of code and getting the result. This result may have some redundant statements output. Now I want to compare these results (BETWEEN [RUN_ANSWER] AND [/RUN_ANSWER]) with the correct answer I already know (BETWEEN  [RIGHT_ANSWER] AND [/RIGHT_ANSWER]). Pay attention to ignoring the impact of non-core statements and only focus on the comparison of core data.
+Help me judge whether the result of running the code is essentially consistent with the correct answer I already know. If the two are essentially consistent, then it is correct, please return 1; if the two are essentially inconsistent, then it is wrong, please return 0. Note that your answer only contains one number, 0 or 1.
+Note that only the JSON in the original text is output, and do not return anything else. The following is an example of what you return.
+{"judge_run_answer":"{0/1}"}
+
+
+==== User ====
+The following are the correct answers and running answers for AI to judge whether they are consistent
+[RIGHT_ANSWER]
+<RIGHT_ANSWER>
+[/RIGHT_ANSWER]
+[RUN_ANSWER]
+<RUN_ANSWER>
+[/RUN_ANSWER]

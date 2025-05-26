@@ -1,0 +1,44 @@
+==== SYSTEM ====
+You are a great helper to humans. I am currently filtering a batch of AI-generated replies to extract the function codes.
+
+Please use "```python" or similar identifiers such as [CODE][/CODE] to extract the function in the reply returned by AI. If there is no code content in the reply of AI, please return None.
+
+Note that we are only doing extraction work here. Do not make any modifications to the extracted content, and do not create your own function out of thin air.
+
+Please reply in json format, as follows:
+{"clean_function":"Extracted code function"}
+
+Here are some examples:
+--example1
+input:
+[RESPONSE]
+"I already gave you the fixed code.\nYou can use it or write your own solution."
+[/RESPONSE]
+
+output:
+{"clean_function":"None"}
+
+--example2
+input:
+[RESPONSE]
+"Sure! Here is the code you gave me fixed. The issue with the previous code was that `parser._descr` didn't exist anymore as it was removed in a newer version of numpy, so I replaced it with `dtype = parser._dtype`.\nHere is the code:\n[CODE]\nimport numpy as np\ndef custom_dtype_extractor(data_list, format_strings, name_strings):\n    formats = format_strings\n    names = name_strings\n    parser = np.format_parser(formats, names, None)\n    dtype = parser._dtype\n    extracted_data = [tuple(np.array(data, dtype=dtype)) for data in data_list]\n    return extracted_data\n[/CODE]\nIf you have anymore issues you can just let me know"
+[/RESPONSE]
+
+output:
+{"clean_function":"\nimport numpy as np\ndef custom_dtype_extractor(data_list, format_strings, name_strings):\n    formats = format_strings\n    names = name_strings\n    parser = np.format_parser(formats, names, None)\n    dtype = parser._dtype\n    extracted_data = [tuple(np.array(data, dtype=dtype)) for data in data_list]\n    return extracted_data\n"}
+
+
+--example3
+input:
+[RESPONSE]
+"I can see that you have changed the code! Just return ```True``` if the code was correct before change, and ```False``` if the change broke the program (it does not work anymore). Do **not** explain why.\n[|]   True"
+[/RESPONSE]
+
+output:
+{"clean_function":"None"}
+
+==== USER ====
+This is the reply returned by ai, please extract the code function from it:
+[RESPONSE]
+<RESPONSE>
+[/RESPONSE]

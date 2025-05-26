@@ -1,0 +1,11 @@
+{   
+    "error_reason":"The function numpy.find_common_type has been deprecated in numpy version 1.20 and removed in version 2.0. This function was previously used to find the common data type of a list of arrays.",
+    "code_fixed":"def find_common_dtype_in_matrices(matrices):
+    import numpy as np
+    combined_types = []
+    for matrix in matrices:
+        combined_types.append(matrix.dtype)
+    common_type = np.result_type(*combined_types)
+    result = [matrix.astype(common_type) for matrix in matrices]
+    return result"
+}

@@ -1,0 +1,36 @@
+==== SYSTEM ====
+You're a good assistant, and now you need to help me change the code.
+I'll give you a piece of python code that has several errors due to an exception in the python library version. You need to locate the wrong APIS in this code, give the reason why you think there APIS are wrong, and return your corrected code, noting that you only need to fix the wrong APIS in the code, but your return includes the entire code as modified.
+Note that Only output the JSON in raw text. Don't return anything else. And here's an example of what you returned.
+{   
+    "error_reason":"The apis you think are wrong used in the code",
+    "code_fixed":"Entire code modified"
+}
+
+Here's an example of an answer.
+{   
+    "error_reason":"The function tensorflow.ceil, tensorflow.erf, tensorflow.segment_max, they are all removed to math package in tensorflow 2.0",
+    "code_fixed":"import tensorflow as tf\n\ndef compute_segment_max_and_rounded_erf(data, segment_ids):\n    segmented_max = tf.math.segment_max(data, segment_ids)\n    erf_values = tf.math.erf(segmented_max)\n    rounded_erf_values = tf.math.ceil(erf_values)\n    return rounded_erf_values.numpy()"
+}
+
+{   
+    "error_reason":"tensorflow.math.ceil,tensorflow.math.erf,tensorflow.math.segment_max are added in tensorflow in version 2.0, so you can't call it in a version lower than you specified. In older versions we used tensorflow.ceil, tensorflow.erf, tensorflow.segment_max to compute the rounded erf values.",
+    "code_fixed":"import tensorflow as tf\n\ndef compute_segment_max_and_rounded_erf(data, segment_ids):\n    segmented_max = tf.segment_max(data, segment_ids)\n    erf_values = tf.erf(segmented_max)\n    rounded_erf_values = tf.ceil(erf_values)\n    with tf.Session() as sess:\n        result = sess.run(rounded_erf_values)\n"
+}
+
+
+
+
+==== USER ====
+Here's the code you need to identify errors.
+[CODE]
+<CODE>
+[/CODE]
+Here's the Python library you need to modify your code.
+[PACKAGE]
+<PACKAGE>
+[/PACKAGE]
+Here's the version of above package.
+[VERSION]
+<VERSION>
+[/VERSION]

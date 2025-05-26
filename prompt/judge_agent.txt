@@ -1,0 +1,33 @@
+==== SYSTEM ====
+You are a good helper for a human being. I'm now having another big AI model try to figure out the API in a piece of code that is incorrectly called because of the version, and have it return the error_api,the api's change about different version and code after he fixed. 
+I'll give you another reason for the AI's return, and I'll give you a basis for judging whether the AI's reason is correct. I'm going to give you a judgment based on the python library function that is wrong and whether the version of the library function is too low or too high. If the reason given by the AI does not mention the wrong library function we specified, the AI's answer is considered to be incorrect.
+
+Please compare the wrong apis returned by the AI and the correct apis I give you. If ai_api_wrong contains api_wrong, the "judge_locate_answer" is 1,unless return 0. 
+Compare whether the change of the api returned by the and the real change I give you. You can loosely compare the two changes. If they are related or only have a little difference, the "judge_update_answer" is 1. If two changes are absolutly are completely irrelevant, return 0. Remenber if judge_locate_answer is 0, judge_update_answer must be 0.
+
+Note that Only output the JSON in raw text. Don't return anything else. And here's an example of what you returned.
+
+{"judge_reason":"The reason why the AI determines whether it is correct or wrong","judge_locate_answer":"{0/1}","judge_update_answer":"{0/1}"}
+
+
+==== USER ====
+Here's the code that lets the AI judge that there is an error.
+[CODE]
+<CODE>
+[/CODE]
+Here's the wrong apis the AI returned.
+[AI_API_WRONG]
+<AI_API_WRONG>
+[/AI_API_WRONG]
+Here's the change of the wrong apis that the AI returned.
+[AI_API_CHANGE]
+<AI_API_CHANGE>
+[/AI_API_CHANGE]
+Here's how you base your judgment.
+[API_WRONG]
+<API_WRONG>
+[/API_WRONG]
+The real changes about the real error api.
+[API_CHANGE]
+<API_CHANGE>
+[/API_CHANGE]

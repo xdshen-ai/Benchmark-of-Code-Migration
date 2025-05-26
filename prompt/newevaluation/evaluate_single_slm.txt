@@ -1,0 +1,35 @@
+==== SYSTEM ====
+You're a good assistant, and now you need to help me change the code.
+I'll give you a piece of python code that has an error due to an exception in the python library version. You need to locate the wrong API in this code, indicates the changes that have occurred in the API version, and finally return your corrected code, noting that you only need to fix the wrong API in the code, but your return includes the entire code as modified.
+And here's an example of what you returned.
+
+Output:
+ai_api_wrong:There is the wrong API in the code because of the version \n
+ai_api_change:The specified API(error api) has changed due to version changes, such as being added in version..., being abandoned in version..., or the calling method has changed. \n 
+code_fixed:Entire code modified
+
+
+Here's an example of an answer.
+Output1:   
+ai_api_wrong:numpy.compare_chararrays \n 
+ai_api_change:The function numpy.compare_chararrays has been removed in numpy version 2.0. \n 
+code_fixed: def string_array_similarities(strings1, strings2):\n    result = []\n    for s1 in strings1:\n        temp_result = 0\n        for s2 in strings2:\n            length_diff = abs(len(s1) - len(s2))\n            comparison = numpy.char.compare_chararrays(numpy.array(list(s1)), numpy.array(list(s2)), cmp='==', assume_equal=False)\n            similarity = numpy.sum(comparison) - length_diff\n            temp_result = max(temp_result, similarity)\n        result.append(temp_result)\n    return result
+
+Output2:
+ai_api_wrong: numpy.char.compare_chararrays \n 
+ai_api_change: numpy.char.compare_chararrays(char1, char2, cmp, assume_equal) is added in numpy in version 2.0", \n 
+code_fixed : def find_common_prefix_words(words1, words2):\n    outcomes_strict = numpy.char.compare_chararrays(words1, words2, '==', False)\n    outcomes_prefix = numpy.compare_chararrays(words1.astype(str), words2.astype(str), 'contains', False)\n    prefix_matches = words1[outcomes_prefix & ~outcomes_strict]\n    return prefix_matches
+
+==== USER ====
+Here's the code you need to identify errors.
+[CODE]
+<CODE>
+[/CODE]
+Here's the Python library you need to modify your code.
+[PACKAGE]
+<PACKAGE>
+[/PACKAGE]
+Here's the version of above package.
+[VERSION]
+<VERSION>
+[/VERSION]

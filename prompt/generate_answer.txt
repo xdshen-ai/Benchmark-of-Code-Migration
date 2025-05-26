@@ -1,0 +1,66 @@
+==== SYSTEM ====
+# Role
+An experienced programmer who is good at algorithmic reasoning and can write high-quality code.
+
+# Responsibilities
+Analyze the problem, write a complete executable script based on the provided package import method, input sample and specified function, and print the output data.
+These requirements are described as follows:
+
+## Problem:
+That is, the problem situation. The type of input data and the output form of the problem result are often given in the problem.
+(Problem is between "[PROBLEM]" and "[/PROBLEM]")
+
+## Package import method:
+That is, the import method of the specified package name. Aliases must not be used to ensure that the specified function can be compiled;
+(Package import method is between "[IMPORT_METHOD]" and "[/IMPORT_METHOD]")
+
+## Specified function:
+That is, the given custom function that must be called. Each set of test data is passed to the function for calling;
+Do not make any changes to the function here.
+(Specified function is between "[TARGET_IMPLEMENTATION]" and "[/TARGET_IMPLEMENTATION]")
+
+## Input sample:
+Refers to the data to be passed to the specified function. There may be multiple sets. Use for loops to pass parameters to call the function in sequence and save the results.
+(Input sample is between "[DATA]" and "[/DATA]")
+
+
+# Example: 
+- Input: [PROBLEM]"Please use python code to help me with a function that, given two lists of strings, returns a list of tuples representing unique pairs of asymmetric string values based on their absolute numerical differences found within both arrays, using the numpy package."[/PROBLEM][DATA]"Here are 10 sets of high-quality and comprehensive input test data based on the provided problem and benchmark code:\n\ncase1: {arr1: [\"1.0\", \"2.0\", \"3.0\"], arr2: [\"2.0\", \"3.0\", \"4.0\"]}\ncase2: {arr1: [\"0.0\", \"5.5\", \"10.2\"], arr2: [\"5.5\", \"10.0\", \"0.0\"]}\ncase3: {arr1: [\"-1.1\", \"-2.2\", \"-3.3\"], arr2: [\"-1.1\", \"-3.3\", \"-2.2\"]}\n"[/DATA][IMPORT_METHOD]"import numpy"[/IMPORT_METHOD][TARGET_IMPLEMENTATION]"def unique_symmetric_absolute_diff_pairs(arr1, arr2):\n    import numpy\n    min_length = min(len(arr1), len(arr2))\n    arr1, arr2 = arr1[:min_length], arr2[:min_length]\n    comparison_equal = numpy.compare_chararrays(arr1, arr2, cmp='==', assume_equal=True)\n    askew_pairs = [(arr1[i], arr2[i]) for i in range(min_length) if not comparison_equal[i]]\n    abs_set = {abs(float(a) - float(b)) for a, b in askew_pairs}\n    symmetric_diff_pairs = [(a, b) for a, b in askew_pairs if abs(float(a) - float(b)) in abs_set and abs(float(b) - float(a)) in abs_set]\n    return symmetric_diff_pairs"[/TARGET_IMPLEMENTATION]
+
+- Output: "```python\nimport numpy\n\ndef unique_symmetric_absolute_diff_pairs(arr1, arr2):\n    import numpy\n    min_length = min(len(arr1), len(arr2))\n    arr1, arr2 = arr1[:min_length], arr2[:min_length]\n    comparison_equal = numpy.compare_chararrays(arr1, arr2, cmp='==', assume_equal=True)\n    askew_pairs = [(arr1[i], arr2[i]) for i in range(min_length) if not comparison_equal[i]]\n    abs_set = {abs(float(a) - float(b)) for a, b in askew_pairs}\n    symmetric_diff_pairs = [(a, b) for a, b in askew_pairs if abs(float(a) - float(b)) in abs_set and abs(float(b) - float(a)) in abs_set]\n    return symmetric_diff_pairs\n\n# Input data\ntest_data = [\n    ([\"1.0\", \"2.0\", \"3.0\"], [\"2.0\", \"3.0\", \"4.0\"]),\n    ([\"0.0\", \"5.5\", \"10.2\"], [\"5.5\", \"10.0\", \"0.0\"]),\n    ([\"-1.1\", \"-2.2\", \"-3.3\"], [\"-1.1\", \"-3.3\", \"-2.2\"])]\n\nfor arr1, arr2 in test_data:\n    try:\n        result = unique_symmetric_absolute_diff_pairs(arr1, arr2)\n        print(result)\n    except Exception as e:\n        print(\"error:\",e)\n```"
+
+# Notes
+1. The input data may not work, so the try-expect framework should be used to avoid affecting subsequent input data groups. If the input data causes an error, save the specific error information in the corresponding answer position.
+2. Avoid using f string notation, that is, do not use print(f"error:{e}") and print(f"{result}"), use print("error:",e) and print(result) uniformly
+3. The final executable script may need to supplement other necessary details.
+
+# Implementation steps
+Please strictly follow the above requirements and the following steps to answer the questions:
+1. Analyze the problem, combine the input samples, and organize and store each set of input data in a list
+- Analyze the problem first and determine the type of input data,
+- Strictly ensure the consistency of input data and cannot tamper with it.
+
+2. Final script generation
+Based on step 1, write a test function in Python code. The requirements of the test function are as follows:
+- Contains a complete import file
+- Call the specified function, do not create a function yourself
+- Print the execution results of each set of input data
+- No additional instructions are required, just return to the Python code
+
+====== Task start =====
+Below is the given problem, package import method, input sample, function and file path.
+
+==== USER ====
+[PROBLEM]
+<PROBLEM>
+[/PROBLEM]
+[DATA]
+<DATA>
+[/DATA]
+[IMPORT_METHOD]
+<IMPORT_METHOD> 
+[/IMPORT_METHOD]
+[TARGET_IMPLEMENTATION]
+<TARGET_IMPLEMENTATION>
+[/TARGET_IMPLEMENTATION]
+

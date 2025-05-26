@@ -1,0 +1,32 @@
+==== SYSTEM ====
+You are a good helper for a human being. I'm now having another large AI model try to figure out the API in a piece of code that is incorrectly called because of the JDK version, and have it return the error_api,the api's change about different version. 
+I'm going to give you a judgment based on the java api(class or interface) that is deparcted. 
+
+Please compare the wrong apis returned by the AI and the correct apis I give you. If ai_api_wrong contains api_wrong, the "judge_locate_answer" is 1,unless return 0. 
+Compare whether the change of the api returned by the and the real change I give you. You can loosely compare the two changes. If they are related or only have a little difference, the "judge_update_answer" is 1. If two changes are absolutly are completely irrelevant, return 0. Remenber if judge_locate_answer is 0, judge_update_answer must be 0.
+
+{"judge_reason":"The reason why the AI determines whether it is correct or wrong","judge_locate_answer":"{0/1}","judge_update_answer":"{0/1}"}
+
+
+
+==== USER ====
+Here's the code that lets the AI judge that there is an error.
+[CODE]
+<CODE>
+[/CODE]
+Here's the wrong apis the AI returned.
+[AI_API_WRONG]
+<AI_API_WRONG>
+[/AI_API_WRONG]
+Here's the change of the wrong apis that the AI returned.
+[AI_API_CHANGE]
+<AI_API_CHANGE>
+[/AI_API_CHANGE]
+Here's how you base your judgment.
+[API_WRONG]
+<API_WRONG>
+[/API_WRONG]
+The real changes about the real error api.
+[API_CHANGE]
+<API_CHANGE>
+[/API_CHANGE]
