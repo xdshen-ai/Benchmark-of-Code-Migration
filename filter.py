@@ -219,11 +219,8 @@ def main(begin):
     pass_k = 5
     finally_merge_k_path = os.path.join(f"./newdata/finally_result/",file_holder,f"pass_{pass_k}_{file_name}")
     finally_package_k_path = os.path.join(f"./newdata/finally_result/",file_holder,f"package_{pass_k}_{file_name}")
-    # 内部有一些细节要改！！
+
     Random_code_id(code_id_path,finally_merge_path,pass_k,finally_merge_k_path,finally_package_k_path)
-    # Random_code_id2(code_id_path,finally_merge_path,pass_k,finally_merge_k_path,finally_package_k_path)
-    # Random_code_id3(code_id_path,finally_merge_path,pass_k,35,65,finally_merge_k_path,finally_package_k_path)
-    # Random_code_id4(code_id_path,finally_merge_path,pass_k,7,8,finally_merge_k_path,finally_package_k_path)
 
     # re_signature = 0 表示调用失败
     # success_run  = 0 表示编译运行失败
