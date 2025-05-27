@@ -7,14 +7,12 @@ import pandas as pd
 '''注意这里同时生成ai_reason和code_fixed的字典可能只适合比较大的模型，有可能一些小模型直接生成文本
 所以到时候会增加两个prompt，但是judger固定使用4o-mini，prompt不变'''
 
-evaluate_comibine_llm_prompt='Evaluation/prompt/newevaluation/evaluate_combine_llm.txt'
-evaluate_single_llm_prompt='Evaluation/prompt/newevaluation/evaluate_single_llm.txt'
-evaluate_single_slm_prompt='Evaluation/prompt/only_codefixed/evaluate_single_slm.txt'
-evaluate_combine_slm_prompt='Evaluation/prompt/only_codefixed/evaluate_single_slm.txt'
-evaluate_java_prompt='Evaluation/prompt/newevaluation/evaluation_java.txt'
-judge_prompt_single="Evaluation/prompt/judge_agent.txt"
-judge_prompt_combine="Evaluation/prompt/judge_agent_combine.txt"
-judge_java_prompt="Evaluation/prompt/judge_agent_java.txt"
+evaluate_comibine_llm_prompt='prompt/newevaluation/evaluate_combine_llm.txt'
+evaluate_single_llm_prompt='prompt/newevaluation/evaluate_single_llm.txt'
+evaluate_java_prompt='prompt/newevaluation/evaluation_java.txt'
+judge_prompt_single="prompt/judge_agent.txt"
+judge_prompt_combine="prompt/judge_agent_combine.txt"
+judge_java_prompt="prompt/judge_agent_java.txt"
 judge_model='gpt-4o-mini'
 
 eval_models={"gpt-4o-mini":{"eval_model":'gpt-4o-mini',"model_dir":'gpt-4o-mini'},
@@ -214,82 +212,7 @@ def java_main():
 
 
 if __name__ == '__main__':
-    #main('old2new')
-    #java_main()
-    python_main()
-    #check_filed('Evaluation/newoutput/gpt-4o/single_eval.jsonl')
-    # input_path='Evaluation/newoutput/gpt-3.5-turbo/combine_eval.jsonl'
     
-    # input_path='dataSetGenerate/data/filter/pass_demo_code.jsonl'
-    # data=getDictFromJsonl(input_path)
-    # dict_={}
-    # for item in data:
-    #     if item['package'] not in dict_.keys():
-    #         dict_[item['package']]=1
-    #     else:
-    #         dict_[item['package']]+=1
-    # print(dict_)
-
-
-
-    # input_path='Evaluation/newoutput/deepseek-chat/single_eval.jsonl'
-    # dict_={}
-    # data=getDictFromJsonl(input_path)
-    # for idx,item in enumerate(data):
-    #     if item['code_id'] not in dict_.keys():
-    #         dict_[item['code_id']]=1
-    #     else:
-    #         dict_[item['code_id']]+=1
-
-    # for key in dict_.keys():
-    #     if dict_[key]!=5:
-    #         print(key,dict_[key])
-
-    # code_path='dataSetGenerate/data/filter/pass_demo_code.jsonl'
-    # data=getDictFromJsonl(code_path)
-    # code_id_list=[item['code_id'] for item in data]
-    # print(len(code_id_list))
-    # for code_id in code_id_list:
-    #     if code_id not in dict_.keys():
-    #         print(code_id)
-
-    # input_path1='dataSetGenerate/api/f1-f2.jsonl'
-    # input_path2='dataSetGenerate/api/all.jsonl'
-    # data1=getDictFromJsonl(input_path1)
-    # data2=getDictFromJsonl(input_path2)
-    # f1_None=[]
-    # None_f1=[]
-    # f1_f2=[]
-    # for item in data1:
-    #     if item['version_type']=='low':
-    #         f1_None.append(item['api_id'])
-    #     else:
-    #         None_f1.append(item['api_id'])
-
-    # for item in data2:
-    #     if item['api_id'] in f1_None or item['api_id'] in None_f1:
-    #         continue
-
-    #     if item['compare_signature']=='':
-    #         if item['version_type']=='low':
-    #             f1_None.append(item['api_id'])
-    #         else:
-    #             None_f1.append(item['api_id'])
-    #     else:
-    #         f1_f2.append(item['api_id'])
-        
-    # output_path='dataSetGenerate/api/classify.jsonl'
-    # dict_={}
-    # dict_['f1_None']=f1_None
-    # dict_['None_f1']=None_f1
-    # dict_['f1_f2']=f1_f2
-    # #print(len(f1_None),len(None_f1),len(f1_f2))
-    # append_to_jsonl(output_path,[dict_])
-
-    # input_path='Evaluation/output/gpt-4o-mini_java_locate_res.jsonl'
-    # acc=calculate_accuracy(input_path)
-    # print(acc)
-    # old2new_output_path="Evaluation/output/old2new_record.jsonl"
-    # new2old_output_path="Evaluation/output/new2old_record.jsonl"
-    # reSetId(new2old_output_path)
+    python_main()
+    
 
