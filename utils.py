@@ -637,10 +637,9 @@ def acculate_pass_code(code_id_path, input_path,package_output_path):
 
 
 # 随机选择一个code_id生成转化的多份代码的num份
-def Random_code_id(code_id_path, input_path, num, item_output_path,package_output_path):
+def Random_code_id(code_id_path, data, num, item_output_path,package_output_path):
     # 获取所有 code_id 和 data 数据
     code_ids = getDictFromJsonl(code_id_path)  # 假设这个是一个包含 code_id 的列表
-    data = getDictFromJsonl(input_path)
 
     # 初始化输出列表
     output = []

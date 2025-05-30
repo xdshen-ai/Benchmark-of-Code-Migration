@@ -5,9 +5,8 @@ import os
 
 model='gpt-4o-mini'
 
-def RE_signature(input_path,pass_output_path,fail_output_path):
+def RE_signature(input_path,data):
     if "combine" in input_path:
-        data = getDictFromJsonl(input_path)
         pass_output=[]
         fail_output=[]
         for _,item in enumerate(data):
@@ -32,10 +31,8 @@ def RE_signature(input_path,pass_output_path,fail_output_path):
             if pass_re:
                 item['re_signature']=1
                 pass_output.append(item)
-        rewrite_jsonl(pass_output_path,pass_output)
-        rewrite_jsonl(fail_output_path,fail_output)
+        return pass_output,fail_output
     else:
-        data = getDictFromJsonl(input_path)
         pass_output=[]
         fail_output=[]
         for _,item in enumerate(data):
@@ -57,13 +54,12 @@ def RE_signature(input_path,pass_output_path,fail_output_path):
                 # print(item)
                 item['re_signature']=0
                 fail_output.append(item)
-        rewrite_jsonl(pass_output_path,pass_output)
-        rewrite_jsonl(fail_output_path,fail_output)
+        return pass_output,fail_output
 
-def Generate_script(begin, input_path, output_path):
+def Generate_script(begin, data):
     prompt_generate_answer_path = "./prompt/generate_answer.txt"
-    data = getDictFromJsonl(input_path)
     
+    output = []
     for index, item in enumerate(data):
         if index < begin:
             continue
@@ -75,17 +71,18 @@ def Generate_script(begin, input_path, output_path):
                 str = getfromOpenAI(system_txt, user_txt, model)
                 print(str)
                 item['fixed_script'] = str
-                append_to_jsonl(output_path, [item])
+                output.append(item)
                 break  # 如果成功，跳出循环
             except Exception as e:  # 捕获异常
                 print(f"Error occurred: {e}. Retrying in 15 minutes...")
                 time.sleep(900)  # 暂停 15 分钟 (900 秒)
                 continue  # 继续重试
+    return output
 
-def Clean_code_fixed(begin,input_path,output_path):
+def Clean_code_fixed(begin,input_path):
     prompt_generate_answer_path = "./prompt/clean_fixcode.txt"
     data = getDictFromJsonl(input_path)
-    
+    clean_data = []
     for index, item in enumerate(data):
         if index < begin:
             continue
@@ -99,16 +96,17 @@ def Clean_code_fixed(begin,input_path,output_path):
                 answer=safe_json_loads(str)
                 item['origin_code_fixed'] = item["code_fixed"]
                 item["code_fixed"] = answer["clean_function"]
-                append_to_jsonl(output_path, [item])
+                clean_data.append(item)
                 break  # 如果成功，跳出循环
             except Exception as e:  # 捕获异常
                 print(f"Error occurred: {e}. Retrying in 15 minutes...")
                 time.sleep(900)  # 暂停 15 分钟 (900 秒)
                 continue  # 继续重试
+    return clean_data
 
-def Run_script(begin,input_path,pass_output_path,fail_output_path):
-    data = getDictFromJsonl(input_path)
-
+def Run_script(begin,data):
+    fail_output = []
+    pass_output = []
     for index, item in enumerate(data):
         if index<begin:
             continue
@@ -119,14 +117,15 @@ def Run_script(begin,input_path,pass_output_path,fail_output_path):
         item['fixed_message']=m_str
         if "error" in m_str:
             item['success_run']=0
-            append_to_jsonl(fail_output_path,[item])
+            fail_output.append(item)
         else:
             item['success_run']=1
-            append_to_jsonl(pass_output_path,[item])
+            pass_output.append(item)
+    return pass_output,fail_output
 
-def RE_Contrast_answer(begin,input_path,output_path):
-    data = getDictFromJsonl(input_path)
+def RE_Contrast_answer(begin,data):
     pass_num = 0
+    output = []
     for index, item in enumerate(data):
         if index<begin:
             continue
@@ -136,8 +135,9 @@ def RE_Contrast_answer(begin,input_path,output_path):
             pass_num=pass_num+1
         else:
             item['re_run_answer']=0
-        append_to_jsonl(output_path,[item])
+        output.append(item)
     print(pass_num)
+    return output
 
 def AI_Contrast_answer(begin,input_path,output_path):
     prompt_contrast_answer_path="./prompt/judge_answer.txt"
@@ -155,29 +155,23 @@ def AI_Contrast_answer(begin,input_path,output_path):
         append_to_jsonl(output_path,[item])
 
 # 将运行通过和不通过的合并
-def Merge_RUN_NOTRUN(fail_run_path,pass_run_path,output_path):
-    fail_data = getDictFromJsonl(fail_run_path)
-    pass_data = getDictFromJsonl(pass_run_path)
+def Merge_RUN_NOTRUN(fail_data,pass_data):
     output=[]
-
     for _, item in enumerate(fail_data):
         output.append(item)
     for _,item in enumerate(pass_data):
         output.append(item)
-    rewrite_jsonl(output_path,output)
+    return output
 
 # 将函数调用的和没有调用的合并
-def Merge_RE_NotRE(fail_re_path,pass_re_path,output_path):
-    fail_data = getDictFromJsonl(fail_re_path)
-    pass_data = getDictFromJsonl(pass_re_path)
+def Merge_RE_NotRE(fail_data,pass_data):
     output=[]
-
     for _, item in enumerate(fail_data):
         output.append(item)
     for _,item in enumerate(pass_data):
         output.append(item)
 
-    rewrite_jsonl(output_path,output)
+    return output
 
 
 def main(begin):
@@ -186,41 +180,34 @@ def main(begin):
     file_holder=f"code_llama"
     
     
-    raw_data=os.path.join(f"./newdata/raw/",file_holder,file_name)
-    clean_data=os.path.join(f"./newdata/clean_fixcode/",file_holder,file_name)
-    pass_re_path=os.path.join(f"./newdata/middle/pass_re/",file_holder,file_name)
-    fail_re_path=os.path.join(f"./newdata/middle/fail_re/",file_holder,file_name)
+    raw_data=os.path.join(f"./eval-data/raw/",file_holder,file_name)
 
-    code_script=os.path.join(f"./newdata/middle/fixed_code_script/",file_holder,file_name)
+    clean_data = Clean_code_fixed(begin,raw_data)
+    pass_re_data,fail_re_data = RE_signature(file_name,clean_data)
+    code_script = Generate_script(begin,pass_re_data)
+    pass_run_data,fail_run_data = Run_script(begin,code_script)
 
-    pass_run_path=os.path.join(f"./newdata/middle/pass_run/",file_holder,file_name)
-    fail_run_path=os.path.join(f"./newdata/middle/fail_run/",file_holder,file_name)
+    contrast_answer_data = RE_Contrast_answer(begin,pass_run_data)
 
-    contrast_answer_path=os.path.join(f"./newdata/filter/",file_holder,file_name)
-
-    finally_merge_path = os.path.join(f"./newdata/finally_result/",file_holder,file_name)
-
-    # Clean_code_fixed(begin,raw_data,clean_data)
-    # RE_signature(clean_data,pass_re_path,fail_re_path)
-    # Generate_script(begin,pass_re_path,code_script)
-    # Run_script(begin,code_script,pass_run_path,fail_run_path)
-
-    # RE_Contrast_answer(begin,pass_run_path,contrast_answer_path)
-
-    # Merge_RUN_NOTRUN(fail_run_path,contrast_answer_path,finally_merge_path)
-    # Merge_RE_NotRE(fail_re_path,finally_merge_path,finally_merge_path)
+    finally_merge_data = Merge_RUN_NOTRUN(fail_run_data,contrast_answer_data)
+    finally_merge_data = Merge_RE_NotRE(fail_re_data,finally_merge_data)
 
     code_id_path = ""
     if "single" in file_name:
-        code_id_path = "./newdata/single_code_id.jsonl"
+        code_id_path = "./eval-data/single_code_id.jsonl"
     elif "combine" in file_name:
-        code_id_path = "./newdata/combine_code_id.jsonl"
+        code_id_path = "./eval-data/combine_code_id.jsonl"
+
+
+    pass_k = 1
+    finally_merge_k_path = os.path.join(f"./eval-data/finally_result/",file_holder,f"pass_{pass_k}_{file_name}")
+    finally_package_k_path = os.path.join(f"./eval-data/finally_result/",file_holder,f"package_{pass_k}_{file_name}")
+    Random_code_id(code_id_path,finally_merge_data,pass_k,finally_merge_k_path,finally_package_k_path)
 
     pass_k = 5
-    finally_merge_k_path = os.path.join(f"./newdata/finally_result/",file_holder,f"pass_{pass_k}_{file_name}")
-    finally_package_k_path = os.path.join(f"./newdata/finally_result/",file_holder,f"package_{pass_k}_{file_name}")
-
-    Random_code_id(code_id_path,finally_merge_path,pass_k,finally_merge_k_path,finally_package_k_path)
+    finally_merge_k_path = os.path.join(f"./eval-data/finally_result/",file_holder,f"pass_{pass_k}_{file_name}")
+    finally_package_k_path = os.path.join(f"./eval-data/finally_result/",file_holder,f"package_{pass_k}_{file_name}")
+    Random_code_id(code_id_path,finally_merge_data,pass_k,finally_merge_k_path,finally_package_k_path)
 
     # re_signature = 0 表示调用失败
     # success_run  = 0 表示编译运行失败
