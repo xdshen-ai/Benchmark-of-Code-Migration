@@ -1,0 +1,1 @@
+python run.py --lang "java"  --model_name "gpt-4o-mini" --type "easy" --judge true

@@ -4,6 +4,7 @@ from agents.Judger import Judger
 import random
 import time
 import pandas as pd
+import argparse
 '''注意这里同时生成ai_reason和code_fixed的字典可能只适合比较大的模型，有可能一些小模型直接生成文本
 所以到时候会增加两个prompt，但是judger固定使用4o-mini，prompt不变'''
 
@@ -27,6 +28,30 @@ eval_models={"gpt-4o-mini":{"eval_model":'gpt-4o-mini',"model_dir":'gpt-4o-mini'
              "code_llama":{"eval_model":"Xorbits/CodeLlama-34B-Instruct-GGUF","model_dir":"code_llama"},
 }
 
+def parse_args():
+    parser = argparse.ArgumentParser(description='模型评估参数解析器')
+    
+    # 添加必需的字符串参数
+    parser.add_argument('--model_name', type=str, required=True,default='gpt-4o-mini',
+                        help='使用的模型名称')
+    parser.add_argument('--lang', type=str, required=True,
+                        help='要检测的语言 (e.g., "python", "java")')
+    parser.add_argument('--type', type=str, required=True,default='easy',
+                        help='要检测的难度 (e.g., "easy", "hard")')
+    parser.add_argument('--judge', type=bool, required=False,default=False,
+                        help='要检测的难度 (e.g., "easy", "hard")')
+    parser.add_argument('--begin', type=int, required=False,default=0)
+    
+    
+    return parser.parse_args()
+
+args = parse_args()
+eval_model = args.model_name
+lang = args.lang
+nandu = args.type
+begin = args.begin
+judge=args.judge
+
 def check_filed(input_path):
     data=getDictFromJsonl(input_path)
     data=getDictFromJsonl(input_path)
@@ -47,12 +72,12 @@ def evaluate(input_path,output_path,eval_mode):
 
     prompt_path=''
     if eval_mode['model_type']=='llm':
-        if eval_mode['api']=='combine':
+        if eval_mode['api']=='hard':
             prompt_path=evaluate_comibine_llm_prompt
         else:
             prompt_path=evaluate_single_llm_prompt
     elif eval_mode['model_type']=='slm':
-        if eval_mode['api']=='combine':
+        if eval_mode['api']=='hard':
             prompt_path=evaluate_combine_slm_prompt
         else:
             prompt_path=evaluate_single_slm_prompt
@@ -60,12 +85,12 @@ def evaluate(input_path,output_path,eval_mode):
     print(prompt_path)
     for index,item in enumerate(data):
         
-        begin=94
+        begin=0
         if index<begin:
             continue
         replier=Replier(model=eval_mode['eval_model'],prompt_instruct_path=prompt_path,variables=get_variables(item,'replier'))
         if index==begin:
-            success=3
+            success=0
         else :
            success=0
         for i in range(success,5):
@@ -88,6 +113,7 @@ def evaluate(input_path,output_path,eval_mode):
             #reply中有ai_reason和code_fixed
             reply.update(item)
             append_to_jsonl(output_path,[reply])
+            
         #record.append(reply)
 
     #append_to_jsonl(output_path,record)
@@ -161,60 +187,78 @@ def locate_judge_java(eval_file_path,locate_res_path):
 
 
 def python_main():
-    input_single_path="dataSetGenerate/data/filter/pass_demo_code.jsonl"
-    input_combine_path="dataSetGenerate/data/filter/pass_demo_combine_code.jsonl"
-    output_dir="Evaluation/newoutput/"
+    input_single_path="eval_data/easy_code.jsonl"
+    input_combine_path="eval_data/hard_code.jsonl"
+    if nandu=='easy':
+        input_path=input_single_path
+    else:
+        input_path=input_combine_path
+    output_dir="output/"
     
-    eval_model='meta-llama/Meta-Llama-3.1-8B-Instruct'
-    #eval_model='meta-llama/Llama-3.3-70B-Instruct'
-    #eval_model='Qwen/Qwen2.5-72B-Instruct'
-    #model_name='llama_70B'
-    #eval_model='gpt-4o-mini'
-    #eval_model='gpt-3.5-turbo'
-    #eval_m='deepseek-chat'
-    #eval_m='gpt-4o-mini'
-    #eval_m='gpt-3.5-turbo'
-    #eval_m='deepseek_chat'
-    #eval_m='qwen_coder'
-    #eval_m='llama_8B'
-    #eval_m='llama_70B'
-    eval_m='code_llama'
-    #eval_m='deepseek-r1'
-    #eval_m='deepseek-chat'
     #change the parameters here is OK
-    eval_mode={'eval_model':eval_models[eval_m]['eval_model'],'model_type':'slm','api':"combine"}
+    eval_mode={'eval_model':eval_models[eval_model]['eval_model'],'model_type':'slm','api':nandu}
     eval_file_name=eval_mode['api']+'_eval.jsonl'
-    output_dir+=eval_models[eval_m]['model_dir']+'/'
+    output_dir+=eval_models[eval_model]['model_dir']+'/'
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
     output_path=os.path.join(output_dir,eval_file_name)
-    evaluate(input_combine_path,output_path,eval_mode)
+    evaluate(input_path,output_path,eval_mode)
     
 
     locate_res_path=output_dir+eval_mode['api']+'_judge.jsonl'
-    #locate_judge_python(output_path,locate_res_path,False)
+    locate_judge_python(output_path,locate_res_path,False)
     # print(calculate_accuracy(locate_res_path))
+    
+def python_judge():
+    eval_mode={'eval_model':eval_models[eval_model]['eval_model'],'model_type':'slm','api':nandu}
+    output_dir="output/"
+    output_dir+=eval_models[eval_model]['model_dir']+'/'
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    eval_file_name=eval_mode['api']+'_eval.jsonl'
+    output_path=os.path.join(output_dir,eval_file_name)
+    locate_res_path=output_dir+eval_mode['api']+'_judge.jsonl'
+    if nandu=='easy':
+        locate_judge_python(output_path,locate_res_path,False)
+    else:
+        locate_judge_python(output_path,locate_res_path,True)
+    
     
 
 def java_main():
-    input_path="dataSetGenerate/api/java_code.jsonl"
-    model_name='gpt-3.5-turbo'
-    eval_m='llama_70B'
-    eval_m='gpt-4o'
-    eval_m='qwen_coder'
-    eval_m='deepseek-chat'
-    eval_m='gpt-4o-mini'
-    output_dir="Evaluation/newoutput/"
-    output_dir=output_dir+eval_models[eval_m]['model_dir']+'/'
-    output_path=output_dir+'java_eval.jsonl'
-    #eval_model='meta-llama/Llama-3.3-70B-Instruct'
+    input_path="eval_data/java_code.jsonl"
     
-    #evaluate_java(input_path,output_path,eval_models[eval_m]['eval_model'])
+    output_dir="output/"
+    output_dir=output_dir+eval_models[eval_model]['model_dir']+'/'
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    output_path=output_dir+'java_eval.jsonl'
+    
+    evaluate_java(input_path,output_path,eval_models[eval_model]['eval_model'])
+    locate_res_path=output_dir+'/java_judge.jsonl'
+    #locate_judge_java(output_path,locate_res_path)
+    
+def java_judge():
+    input_path="eval_data/java_code.jsonl"
+    output_dir="output/"
+    output_dir=output_dir+eval_models[eval_model]['model_dir']+'/'
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    output_path=output_dir+'java_eval.jsonl'
     locate_res_path=output_dir+'/java_judge.jsonl'
     locate_judge_java(output_path,locate_res_path)
-    
-
 
 if __name__ == '__main__':
-    
-    python_main()
-    
+    if judge==False:
+        if lang=='python':
+            python_main()
+        elif lang=='java':
+            java_main()
+
+    else:
+        if lang=='python':
+            python_judge()
+        elif lang=='java':
+            java_judge()
 

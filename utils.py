@@ -6,8 +6,11 @@ import os
 import requests
 import random
 
-os.environ["REPLICATE_API_TOKEN"] = ""
-client1 = OpenAI(api_key="")
+os.environ["OPENAI_API_KEY"] = "sk-cCggOg21MWr3959t8f63064a02304aCd8a74Dc6dB7Cf985c"
+os.environ["OPENAI_BASE_URL"] = "https://api.gpt.ge/v1"
+api_key=os.environ.get("OPENAI_API_KEY")
+base_url=os.environ.get("OPENAI_BASE_URL")
+client1 = OpenAI(api_key=api_key,base_url = base_url)
 client2 = OpenAI(api_key="",base_url = "https://yunwu.ai/v1/")
 client3 = OpenAI(api_key="",base_url = "https://api.gpt.ge/v1")
 client_deep_seek1=OpenAI(api_key="",base_url="https://api.deepseek.com/v1")
@@ -20,103 +23,14 @@ client_moda = OpenAI(
         api_key="",  # 请替换成您的 ModelScope SDK Token
         base_url="https://ms-fc-bapp-func-wgnhvzimnv.cn-hangzhou.fcapp.run/v1"
     )
-api_key=""
-secret_key=""
 
-def get_access_token():
-    """
-    使用应用API Key，应用Secret Key 获取access_token，替换下列示例中的应用API Key、应用Secret Key
-    """
-        
-    url = f"https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id={api_key}&client_secret={secret_key}"
-    
-    payload = json.dumps("")
-    headers = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-    }
-    
-    response = requests.request("POST", url, headers=headers, data=payload)
-    return response.json().get("access_token")
+
 
 client_moda=OpenAI(api_key="",base_url="https://ms-fc-bapp-func-wgnhvzimnv.cn-hangzhou.fcapp.run/v1")
-def getfromOpenAI(system, user,model,kind='yihao',temperature=0.7):
-  if "CodeLlama" in model:
-    #print(model)
-    completion = client_moda.chat.completions.create(
-            model=model,
-            messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": user}
-            ],
-            
-        )
-    #print(completion)
-    return completion.choices[0].message.content
-  elif "llama" in model or "Qwen"  in model:
-      return Request_Model(model,system,user)
-  elif "deepseek" in model:
-    completion = client_deep_seek.chat.completions.create(
-            model=model,
-            messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": user}
-            ],
-            temperature=0.7,
-            max_tokens=1024
-        )
-    #print(completion)
-    return completion.choices[0].message.content
-#   elif "starcoder" in model or "CodeLlama" in model:
-#     response = client_moda.chat.completions.create(
-#         model=model,  # ModelScope Model-Id
-#         messages=[
-#             {
-#                 'role': 'system',
-#                 'content': system
-#             },
-#             {
-#                 'role': 'user',
-#                 'content': user
-#             }
-#         ],
-#         stream=False  # 设置为非流式调用
-#     )
-#     return response.choices[0].message.content
-  elif "starcoder" in model or "CodeLlama" in model:
-    print(f"str:{get_access_token}")
-    url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/completions/starcoder?access_token=" + get_access_token()
+def getfromOpenAI(system, user,model,temperature=0.7):
     
-    payload = json.dumps({
-        "prompt": system+"\n\n"+user
-    })
-    headers = {
-        'Content-Type': 'application/json'
-    }
     
-    response = requests.request("POST", url, headers=headers, data=payload)
-    
-    # print(response.text)
-    return response.text
-  
-  else:
-    if kind=='yihao':
-        completion = client2.chat.completions.create(
-            model=model,
-            messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": user}
-            ],
-        )
-    else :
-        completion = client2.chat.completions.create(
-            model=model,
-            messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": user}
-            ],
-            temperature=temperature
-        )
+    completion = client1.chat.completions.create(messages=[{"role": "system", "content": system}, {"role": "user", "content": user}], model=model,temperature=temperature)
  
     return completion.choices[0].message.content
 

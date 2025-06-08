@@ -14,7 +14,7 @@ class Replier:
     def reply_java(self):
         dict_=None
         while dict_==None:
-            str= getfromOpenAI(system=self.system_instruct,user=self.user_instruct,model=self.model,kind='yihao',temperature=1.5)
+            str= getfromOpenAI(system=self.system_instruct,user=self.user_instruct,model=self.model,temperature=1.0)
             dict_=parserjava(str)
 
         return dict_
@@ -22,7 +22,7 @@ class Replier:
     def reply(self):
         answer=None
         while answer==None:
-            answer=getfromOpenAI(system=self.system_instruct,user=self.user_instruct,model=self.model,kind='yihao',temperature=1)
+            answer=getfromOpenAI(system=self.system_instruct,user=self.user_instruct,model=self.model,temperature=0.8)
             print(answer)
             answer=safe_json_loads(answer,self.is_slm)
             

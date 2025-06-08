@@ -9,7 +9,7 @@ class Judger:
     def judge(self):
         answer=None
         while answer==None:
-            answer=getfromOpenAI(system=self.system_instruct,user=self.user_instruct,model=self.model,kind='shen')
+            answer=getfromOpenAI(system=self.system_instruct,user=self.user_instruct,model=self.model)
             answer=safe_json_loads(answer)
         #print("judger's reason:",answer['reason'])
         return answer
