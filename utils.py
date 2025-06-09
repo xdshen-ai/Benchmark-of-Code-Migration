@@ -6,9 +6,8 @@ import os
 import requests
 import random
 
-os.environ["OPENAI_API_KEY"] = "sk-cCggOg21MWr3959t8f63064a02304aCd8a74Dc6dB7Cf985c"
-os.environ["OPENAI_BASE_URL"] = "https://api.gpt.ge/v1"
-api_key=os.environ.get("OPENAI_API_KEY")
+
+api_key=os.environ.get("OPENAI_KEY")
 base_url=os.environ.get("OPENAI_BASE_URL")
 client1 = OpenAI(api_key=api_key,base_url = base_url)
 client2 = OpenAI(api_key="",base_url = "https://yunwu.ai/v1/")
