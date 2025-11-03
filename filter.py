@@ -176,8 +176,8 @@ def Merge_RE_NotRE(fail_data,pass_data):
 
 def main(begin):
     file_name=f"single_eval.jsonl"
-    # llama_8B
-    file_holder=f"code_llama"
+    # gpt-4o-mini
+    file_holder=f"gpt-4o-mini"
     
     
     raw_data=os.path.join(f"./eval-data/raw/",file_holder,file_name)
