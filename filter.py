@@ -2,6 +2,7 @@ from  utils import *
 import re
 import time
 import os
+import argparse
 
 model='gpt-4o-mini'
 
@@ -173,15 +174,28 @@ def Merge_RE_NotRE(fail_data,pass_data):
 
     return output
 
-
+def parse_args():
+    parser = argparse.ArgumentParser(description='模型评估参数解析器')
+    
+    # 添加必需的字符串参数
+    parser.add_argument('--model_name', type=str, required=True,default='gpt-4o-mini',
+                        help='使用的模型名称')
+    parser.add_argument('--type', type=str, required=True,default='easy',
+                        help='要检测的难度 (e.g., "easy", "hard")')
+    parser.add_argument('--begin', type=int, required=False,default=0)
+    
+    
+    return parser.parse_args()
 def main(begin):
-    file_name=f"single_eval.jsonl"
-    # gpt-4o-mini
-    file_holder=f"gpt-4o-mini"
+    args = parse_args()
+    eval_model = args.model_name
+    nandu = args.type
+    begin = args.begin
+    file_name=f"easy_eval.jsonl"if nandu == "easy" else "hard_eval.jsonl"
+    file_holder=eval_model
     
     
-    raw_data=os.path.join(f"./eval-data/raw/",file_holder,file_name)
-
+    raw_data=os.path.join(f"./output/",file_holder,file_name)
     clean_data = Clean_code_fixed(begin,raw_data)
     pass_re_data,fail_re_data = RE_signature(file_name,clean_data)
     code_script = Generate_script(begin,pass_re_data)
@@ -194,19 +208,19 @@ def main(begin):
 
     code_id_path = ""
     if "single" in file_name:
-        code_id_path = "./eval-data/single_code_id.jsonl"
+        code_id_path = "./eval_data/single_code_id.jsonl"
     elif "combine" in file_name:
-        code_id_path = "./eval-data/combine_code_id.jsonl"
+        code_id_path = "./eval_data/combine_code_id.jsonl"
 
 
     pass_k = 1
-    finally_merge_k_path = os.path.join(f"./eval-data/finally_result/",file_holder,f"pass_{pass_k}_{file_name}")
-    finally_package_k_path = os.path.join(f"./eval-data/finally_result/",file_holder,f"package_{pass_k}_{file_name}")
+    finally_merge_k_path = os.path.join(f"./output/",file_holder,f"pass_{pass_k}_{file_name}")
+    finally_package_k_path = os.path.join(f"./output/",file_holder,f"package_{pass_k}_{file_name}")
     Random_code_id(code_id_path,finally_merge_data,pass_k,finally_merge_k_path,finally_package_k_path)
 
     pass_k = 5
-    finally_merge_k_path = os.path.join(f"./eval-data/finally_result/",file_holder,f"pass_{pass_k}_{file_name}")
-    finally_package_k_path = os.path.join(f"./eval-data/finally_result/",file_holder,f"package_{pass_k}_{file_name}")
+    finally_merge_k_path = os.path.join(f"./output/",file_holder,f"pass_{pass_k}_{file_name}")
+    finally_package_k_path = os.path.join(f"./output/",file_holder,f"package_{pass_k}_{file_name}")
     Random_code_id(code_id_path,finally_merge_data,pass_k,finally_merge_k_path,finally_package_k_path)
 
     # re_signature = 0 表示调用失败

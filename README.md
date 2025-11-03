@@ -23,3 +23,7 @@ Then judging the output from the LLMs，to set the parameter --judge "true"
 sh eval.sh
 ```
 
+Conduct the evaluation of Sub-task 3 only after the evaluations of Sub-task 1 and Sub-task 2 are completed (there is a strict upstream-downstream relationship). You can modify the "model_name" and "type" fields to change the model and adjust the task difficulty respectively.
+```
+sh eval.sh
+```
